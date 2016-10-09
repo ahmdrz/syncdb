@@ -12,7 +12,7 @@ func Panic(err error) {
 	}
 }
 
-func MakeStmt(columns []string) string {
+func MakeStmt(columns []string, selected_table string) string {
 	query := "INSERT INTO " + selected_table + " ("
 	for i := range columns {
 		query += columns[i] + ","
@@ -31,7 +31,7 @@ type Row struct {
 	Values        []interface{}
 }
 
-func MakeValues(rows *sql.Rows, columns []string) []Row {
+func MakeValues(rows *sql.Rows, columns []string, selected_column string) []Row {
 	count := len(columns)
 	values := make([]interface{}, count)
 	valuePtrs := make([]interface{}, count)
