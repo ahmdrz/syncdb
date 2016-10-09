@@ -4,16 +4,9 @@ package main
 import (
 	"fmt"
 	"reflect"
-
-	_ "github.com/denisenkom/go-mssqldb" //i used mssqldb library for connection between two SQL Server databases.
-	// replace your library for database driver.
 )
 
 var config Config
-
-const (
-	database_driver = "mssql"
-)
 
 func main() {
 	config = Read()
