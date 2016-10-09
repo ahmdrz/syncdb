@@ -3,12 +3,13 @@ package main
 
 import (
 	"fmt"
+	"reflect"
 
-	//_ "github.com/denisenkom/go-mssqldb" i used mssqldb library for connection between two SQL Server databases.
+	_ "github.com/denisenkom/go-mssqldb" //i used mssqldb library for connection between two SQL Server databases.
 	// replace your library for database driver.
 )
 
-const (
+/*const (
 	homeConnectionString = "<HomeServer>"
 	awayConnectionString = "<AwayServer>"
 
@@ -16,7 +17,7 @@ const (
 
 	selected_table  = "<Selected_Table>"
 	selected_column = "<Selected_Column>" // for preventing conflicts
-)
+)*/
 
 func main() {
 	//making connection for home...
@@ -43,7 +44,7 @@ func main() {
 	awayValues := MakeValues(rows, awayColumns)
 
 	if len(awayColumns) != len(homeColumns) {
-		panic("Incorrect length of tables")
+		Panic(fmt.Errorf("Incorrect length of tables , They aren't same !"))
 	}
 
 	stmt, err := away.Prepare(MakeStmt(awayColumns))
@@ -53,18 +54,23 @@ func main() {
 	for _, homeValue := range homeValues {
 		exists := false
 		for _, awayValue := range awayValues {
+			if reflect.ValueOf(awayValue.Primary_Value).Type() != reflect.ValueOf(homeValue.Primary_Value).Type() {
+				Panic(fmt.Errorf("Incorrect type of two primary_values"))
+			}
+
 			if awayValue.Primary_Value == homeValue.Primary_Value {
 				exists = true
 				fmt.Println("Conflict with", homeValue.Primary_Value)
 				break
 			}
 		}
+
 		if exists {
 			continue
 		}
 
 		// new row detected ... let's start uploading
 		fmt.Println("Uploading", homeValue.Primary_Value)
-		stmt.Exec(homeValue.Values...)
+		//stmt.Exec(homeValue.Values...)
 	}
 }
