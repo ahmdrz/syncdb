@@ -18,6 +18,15 @@ const (
 func main() {
 	config = Read()
 
+	// config.Direction -> if true : home to away , if false : away to home
+
+	if config.Direction {
+		config.Home, config.Away = config.Away, config.Home
+		fmt.Println("Syncing home to away")
+	} else {
+		fmt.Println("Syncing away to home")
+	}
+
 	//making connection for home...
 	home := Connection(config.Home)
 	defer home.Close()
@@ -25,6 +34,8 @@ func main() {
 	defer away.Close()
 
 	for _, table := range config.Tables {
+		fmt.Println("Checking for", table.Name, "in", table.Column)
+
 		//retrieving home datas using SELECT query
 		rows, err := home.Query("SELECT * FROM " + table.Name + ";")
 		Panic(err)
