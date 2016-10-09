@@ -22,9 +22,9 @@ func main() {
 
 	if config.Direction {
 		config.Home, config.Away = config.Away, config.Home
-		fmt.Println("Syncing home to away")
+		fmt.Println(" * Syncing home to away")
 	} else {
-		fmt.Println("Syncing away to home")
+		fmt.Println(" * Syncing away to home")
 	}
 
 	//making connection for home...
@@ -34,7 +34,7 @@ func main() {
 	defer away.Close()
 
 	for _, table := range config.Tables {
-		fmt.Println("Checking for", table.Name, "in", table.Column)
+		fmt.Println(" * Checking for", table.Name, "in", table.Column)
 
 		//retrieving home datas using SELECT query
 		rows, err := home.Query("SELECT * FROM " + table.Name + ";")
@@ -62,6 +62,9 @@ func main() {
 		Panic(err)
 		defer stmt.Close()
 
+		uploadedCount := 0
+		conflictsCount := 0
+
 		for _, homeValue := range homeValues {
 			exists := false
 			for _, awayValue := range awayValues {
@@ -71,7 +74,8 @@ func main() {
 
 				if awayValue.Primary_Value == homeValue.Primary_Value {
 					exists = true
-					fmt.Println("Conflict with", homeValue.Primary_Value)
+					fmt.Println("  - Conflict with", homeValue.Primary_Value)
+					conflictsCount++
 					break
 				}
 			}
@@ -81,9 +85,12 @@ func main() {
 			}
 
 			// new row detected ... let's start uploading
-			fmt.Println("Uploading", homeValue.Primary_Value)
-			//stmt.Exec(homeValue.Values...)
+			fmt.Println("  + Uploading", homeValue.Primary_Value)
+			stmt.Exec(homeValue.Values...)
+			uploadedCount++
 		}
+
+		fmt.Println(" * Syncing finish for", table.Name, "Uploads :", uploadedCount, "Conflicts :", conflictsCount)
 	}
 
 }
