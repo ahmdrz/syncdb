@@ -1,0 +1,20 @@
+{
+  "__connectionstring_comment": "these connection strings tested on mssql",
+  
+  "home": "server=*;user id=*;password=*;port=*;database=*",
+  "away": "server=*;user id=*;password=*;port=*;database=*",
+  
+  "__direction_comment": "if true (server to local) else (local to server)",
+  "direction": true,
+  
+  "tables": [
+    {
+      "name": "*",
+      "column": "*"
+    },
+    {
+      "name": "*",
+      "column": "*"
+    }
+  ]
+}
